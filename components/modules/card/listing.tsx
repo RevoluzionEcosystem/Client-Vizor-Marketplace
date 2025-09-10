@@ -7,6 +7,8 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Card, CardContent, CardTitle } from "@/components/ui/card"
 import SellCarousel from "../carousel/sell"
 import BuyCarousel from "../carousel/buy"
+import { Button } from "@/components/ui/button"
+import { DialogClose } from "@radix-ui/react-dialog"
 
 const header = [
 	"Pair",
@@ -57,7 +59,7 @@ export default function CardListing({ listings }: CardListingProps) {
 							key={`lp-${index}`}
 						>
 							<DialogTrigger asChild>
-								<div>
+								<div className={`cursor-pointer`}>
 									<CardCustom
 										className="px-4"
 										border={`${index % 3 > 0 ? index % 3 > 1 ? `three-points-gradient-border` : `three-points-gradient-border-listing` : `three-points-gradient-border-list`}`}
@@ -139,7 +141,22 @@ export default function CardListing({ listings }: CardListingProps) {
 									)}
 								/>
 								<div className="w-full mt-4">
-								    <BuyCarousel slides={[0]} listing={item} options={{ loop: false }} />
+								    <BuyCarousel
+										cancel={(
+											<DialogClose>
+												<Button
+													variant="outline"
+													// disabled={isLoadingProcess}
+													className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700 font-mono"
+												>
+													Cancel
+												</Button>
+											</DialogClose>
+										)}
+										slides={[0]}
+										listing={item}
+										options={{ loop: false }}
+									/>
 								</div>
 							</DialogContent>
 						</Dialog>

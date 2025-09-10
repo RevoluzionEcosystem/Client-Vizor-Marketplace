@@ -8,7 +8,7 @@ import {
 	usePrevNextButtons
 } from './arrows'
 import useEmblaCarousel from 'embla-carousel-react'
-import { FC, useEffect, useState, FormEvent } from 'react'
+import { FC, useEffect, useState, FormEvent, ReactNode } from 'react'
 import CardCustom from '../card/custom'
 import Image from 'next/image'
 import img1 from "@/public/assets/images/progress-1.png"
@@ -27,11 +27,12 @@ import { Badge } from '@/components/ui/badge'
 type PropType = {
 	slides: number[] | any[]
 	listing?: any
+	cancel?: ReactNode
 	options?: EmblaOptionsType
 }
 
 const BuyCarousel: FC<PropType> = (props) => {
-	const { slides, options, listing } = props
+	const { slides, options, cancel, listing } = props
 	const [emblaRef, emblaApi] = useEmblaCarousel(options)
 	const [index, setIndex] = useState(0)
 	const { address, isConnected } = useAppKitAccount();
@@ -330,14 +331,7 @@ const BuyCarousel: FC<PropType> = (props) => {
 
 											{/* Action Buttons */}
 											<div className="flex space-x-3">
-												<Button
-													variant="outline"
-													// onClick={onClose}
-													disabled={isLoadingProcess}
-													className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700 font-mono"
-												>
-													Cancel
-												</Button>
+												{cancel}
 												<Button
 													onClick={handlePurchase}
 													disabled={!isConnected || isLoadingProcess}
