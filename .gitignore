@@ -1,0 +1,104 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnpm-store/
+.yarn-cache/
+.yarnrc.local
+
+# testing
+/coverage
+/.nyc_output
+
+# next.js
+/.next/
+/out/
+.swc/
+
+# production
+/build
+/dist
+
+# misc
+.DS_Store
+*.pem
+Thumbs.db
+.env.me
+.env.override
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env
+.env*.local
+.env.development
+.env.test
+.env.production
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# logs
+logs
+*.log
+lerna-debug.log*
+
+# cache
+.npm
+.stylelintcache
+.turbo
+.cache/
+
+# sitemap and generated files
+/public/sitemap*.xml
+/public/robots.txt
+
+# PWA files
+**/public/sw.js
+**/public/workbox-*.js
+**/public/worker-*.js
+**/public/fallback-*.js
+**/public/precache-manifest.*.js
+**/public/service-worker.js
+
+# Optional: Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional: Local certificates
+certificates/
+*.crt
+*.key
+
+# Optional: Build outputs
+.firebase/

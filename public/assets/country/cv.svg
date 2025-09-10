@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg:svg xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 510.0 300.0" width="50.00" height="29.41">
+<svg:rect width="510" height="300" fill="#003893" />
+<svg:rect width="510" height="75" y="150" fill="#fff" />
+<svg:rect width="510" height="25" y="175" fill="#cf2027" />
+<svg:g fill="#f7d116" transform="translate(191.25,187.5)">
+<svg:g id="s2">
+<svg:g id="s" transform="translate(0,-75)">
+<svg:g id="c">
+<svg:path id="t" d="M0,-15V0H7.5" transform="rotate(18,0,-15)" />
+<svg:use xlink:href="#t" transform="scale(-1,1)" />
+</svg:g>
+<svg:use xlink:href="#c" transform="rotate(72)" />
+<svg:use xlink:href="#c" transform="rotate(144)" />
+<svg:use xlink:href="#c" transform="rotate(216)" />
+<svg:use xlink:href="#c" transform="rotate(288)" />
+</svg:g>
+<svg:use xlink:href="#s" y="150" />
+</svg:g>
+<svg:use xlink:href="#s2" transform="rotate(72)" />
+<svg:use xlink:href="#s2" transform="rotate(144)" />
+<svg:use xlink:href="#s2" transform="rotate(216)" />
+<svg:use xlink:href="#s2" transform="rotate(288)" />
+</svg:g>
+</svg:svg>

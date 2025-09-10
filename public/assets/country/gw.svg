@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg:svg xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-2 -3 12.0 6.0" width="50.00" height="25.00">
+<svg:rect x="-2" y="-3" width="4" height="6" fill="#ce1126" />
+<svg:rect x="2" y="-3" width="8" height="3" fill="#fcd116" />
+<svg:rect x="2" width="8" height="3" fill="#009e49" />
+<svg:g id="c">
+<svg:path id="t" d="M 0,-1 v 1 h .5" transform="rotate(18 0,-1)" fill="#000" />
+<svg:use xlink:href="#t" transform="scale(-1,1)" />
+</svg:g>
+<svg:use xlink:href="#c" transform="rotate(72)" />
+<svg:use xlink:href="#c" transform="rotate(144)" />
+<svg:use xlink:href="#c" transform="rotate(216)" />
+<svg:use xlink:href="#c" transform="rotate(288)" />
+</svg:svg>

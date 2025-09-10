@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg:svg xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-225 -114 450.0 300.0" width="50.00" height="33.33">
+<svg:title>Flag of Malawi</svg:title>
+<svg:rect x="-225" y="-114" width="450" height="300" />
+<svg:g fill="#CE1126">
+<svg:circle r="64.5" />
+<svg:rect x="-225" y="-14" width="450" height="100" />
+<svg:g id="r16">
+<svg:g id="r8">
+<svg:g id="r4">
+<svg:g id="r2">
+<svg:path id="r" d="M0-102c-2.2,0-3,3.3-3,6.5 0,8 1,12 3,23.5 2.04-11.5 3-15.6 3-23.5 0-3.3-1-6.5-3-6.5" />
+<svg:use transform="rotate(5)" xlink:href="#r" />
+</svg:g>
+<svg:use transform="rotate(10)" xlink:href="#r2" />
+</svg:g>
+<svg:use transform="rotate(20)" xlink:href="#r4" />
+</svg:g>
+<svg:use transform="rotate(40)" xlink:href="#r8" />
+</svg:g>
+<svg:use transform="rotate(-80)" xlink:href="#r16" />
+</svg:g>
+<svg:rect x="-225" y="-21.5" width="450" height="7.5" />
+<svg:rect x="-225" y="86" width="450" height="100" fill="#339E35" />
+</svg:svg>
