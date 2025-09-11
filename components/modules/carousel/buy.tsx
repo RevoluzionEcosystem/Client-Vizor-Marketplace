@@ -27,45 +27,13 @@ import { Badge } from '@/components/ui/badge'
 type PropType = {
 	slides: number[] | any[]
 	listing?: any
-	cancel?: ReactNode
 	options?: EmblaOptionsType
 }
 
 const BuyCarousel: FC<PropType> = (props) => {
-	const { slides, options, cancel, listing } = props
+	const { slides, options, listing } = props
 	const [emblaRef, emblaApi] = useEmblaCarousel(options)
 	const [index, setIndex] = useState(0)
-	const { address, isConnected } = useAppKitAccount();
-	const [error, setError] = useState<string | null>(null);
-	const [isLoadingProcess, setIsLoadingProcess] = useState(false);
-	const [success, setSuccess] = useState(false);
-
-	const handlePurchase = async () => {
-        if (!isConnected) {
-            setError('Please connect your wallet');
-            return;
-        }
-
-        setIsLoadingProcess(true);
-        setError(null);
-
-        try {
-            // Simulate transaction for now - replace with actual contract call
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            
-            setSuccess(true);
-            
-            setTimeout(() => {
-                setSuccess(false);
-                // onClose();
-            }, 3000);
-            
-        } catch (err: any) {
-            setError(err.message || 'Failed to purchase listing');
-        } finally {
-            setIsLoadingProcess(false);
-        }
-    };
 
 	const formatTimestamp = (timestamp: bigint) => {
         if (timestamp === BigInt(0)) return 'Not set';
@@ -98,42 +66,6 @@ const BuyCarousel: FC<PropType> = (props) => {
 		contactMethod: '',
 		tokenPair: ''
 	});
-
-	const handleInputChange = (field: string, value: string) => {
-		setFormData(prev => ({ ...prev, [field]: value }));
-		if (contractError) clearError();
-	};
-
-	const handleSubmit = async (e: FormEvent) => {
-		e.preventDefault();
-		
-		if (!isConnected) {
-			toast.error("Please connect your wallet to create a listing");
-			return;
-		}
-
-		// Basic validation
-		if (!formData.price || !formData.tokenAddress || !formData.lpAddress || !formData.lockUrl || !formData.contactMethod) {
-			toast.error("Please fill in all required fields");
-			return;
-		}
-
-		try {
-			await createListing(
-				formData.price,
-				formData.tokenAddress,
-				formData.lpAddress,
-				formData.lockUrl,
-				formData.contactMethod
-			);
-
-			if (!contractError) {
-				toast.success("Your listing transaction has been submitted");
-			}
-		} catch (err: any) {
-			toast.error(err.message || "Failed to create listing");
-		}
-	};
 
 	// Reset form when transaction is confirmed
 	useEffect(() => {
@@ -320,42 +252,6 @@ const BuyCarousel: FC<PropType> = (props) => {
 												</div>
 											)}
 
-											{error && (
-												<div className="p-4 bg-red-900/20 border border-red-500/50 rounded-lg">
-													<div className="flex items-center space-x-2">
-														<AlertCircle className="w-5 h-5 text-red-400" />
-														<p className="text-red-400 font-mono text-sm">{error}</p>
-													</div>
-												</div>
-											)}
-
-											{/* Action Buttons */}
-											<div className="flex space-x-3">
-												{cancel}
-												<Button
-													onClick={handlePurchase}
-													disabled={!isConnected || isLoadingProcess}
-													className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-mono font-bold"
-												>
-													{isLoadingProcess ? (
-														<>
-															<Loader2 className="w-4 h-4 mr-2 animate-spin" />
-															Processing...
-														</>
-													) : (
-														<>
-															<DollarSign className="w-4 h-4 mr-2" />
-															Buy for {listing.price} BNB
-														</>
-													)}
-												</Button>
-											</div>
-											
-											{!isConnected && (
-												<p className="text-center text-slate-400 font-mono text-sm">
-													Connect your wallet to purchase
-												</p>
-											)}
 										</div>
 									)}
 								/>

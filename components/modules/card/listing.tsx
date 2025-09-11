@@ -1,14 +1,17 @@
-import { ReactNode } from "react"
+"use client"
+
+import { ReactNode, useState } from "react"
 import CardCustom from "./custom"
-import { ChevronRight, List, LockKeyhole, Plus } from "lucide-react"
+import { AlertCircle, ChevronRight, DollarSign, List, Loader2, LockKeyhole, Plus } from "lucide-react"
 import CardIcons from "./icons"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { Card, CardContent, CardTitle } from "@/components/ui/card"
 import SellCarousel from "../carousel/sell"
 import BuyCarousel from "../carousel/buy"
 import { Button } from "@/components/ui/button"
 import { DialogClose } from "@radix-ui/react-dialog"
+import { useAppKitAccount } from "@reown/appkit/react"
 
 const header = [
 	"Pair",
@@ -24,6 +27,7 @@ type listing = {
 	status: ReactNode
 	duration: ReactNode
 	action: ReactNode
+	price: ReactNode
 }
 
 interface CardListingProps {
@@ -31,6 +35,38 @@ interface CardListingProps {
 }
 
 export default function CardListing({ listings }: CardListingProps) {
+		const [error, setError] = useState<string | null>(null);
+		const [isLoadingProcess, setIsLoadingProcess] = useState(false);
+		const [success, setSuccess] = useState(false);
+		const { address, isConnected } = useAppKitAccount();
+
+		const handlePurchase = async () => {
+			if (!isConnected) {
+				setError('Please connect your wallet');
+				return;
+			}
+	
+			setIsLoadingProcess(true);
+			setError(null);
+	
+			try {
+				// Simulate transaction for now - replace with actual contract call
+				await new Promise(resolve => setTimeout(resolve, 3000));
+				
+				setSuccess(true);
+				
+				setTimeout(() => {
+					setSuccess(false);
+					// onClose();
+				}, 3000);
+				
+			} catch (err: any) {
+				setError(err.message || 'Failed to purchase listing');
+			} finally {
+				setIsLoadingProcess(false);
+			}
+		};
+	
 	return (
 		<CardCustom
 			className="min-h-[50vh] rounded-2xl"
@@ -124,26 +160,43 @@ export default function CardListing({ listings }: CardListingProps) {
 								</div>
 							</DialogTrigger>
 							<DialogContent className="max-w-[600px] bg-[#000513]">
-								<CardCustom
-									className="rounded-2xl"
-									gradient="three-points-gradient-light"
-									border="three-points-gradient-border-listing"
-									content={(
-										<div className="p-4">
-											<div className="flex items-center space-x-3">
-												<List className="w-6 h-6 text-cyan-400 drop-shadow-sm" />
-												<CardTitle className="text-white font-mono text-xl">Live Marketplace Listings</CardTitle>
+								<DialogTitle>
+									<CardCustom
+										className="rounded-2xl"
+										gradient="three-points-gradient-light"
+										border="three-points-gradient-border-listing"
+										content={(
+											<div className="p-4">
+												<div className="flex items-center space-x-3">
+													<List className="w-6 h-6 text-cyan-400 drop-shadow-sm" />
+													<CardTitle className="text-white font-mono text-xl">Live Marketplace Listings</CardTitle>
+												</div>
+												<p className="text-slate-400 font-mono text-sm">
+													Real-time data from BSC Testnet contract
+												</p>
 											</div>
-											<p className="text-slate-400 font-mono text-sm">
-												Real-time data from BSC Testnet contract
-											</p>
-										</div>
-									)}
-								/>
+										)}
+									/>
+								</DialogTitle>
 								<div className="w-full mt-4">
 								    <BuyCarousel
-										cancel={(
-											<DialogClose>
+										slides={[0]}
+										listing={item}
+										options={{ loop: false }}
+									/>
+									<div className={`p-4 mt-2`}>
+										{error && (
+											<div className="p-4 bg-red-900/20 border border-red-500/50 rounded-lg">
+												<div className="flex items-center space-x-2">
+													<AlertCircle className="w-5 h-5 text-red-400" />
+													<p className="text-red-400 font-mono text-sm">{error}</p>
+												</div>
+											</div>
+										)}
+
+										{/* Action Buttons */}
+										<div className="flex space-x-3">
+											<DialogClose asChild>
 												<Button
 													variant="outline"
 													// disabled={isLoadingProcess}
@@ -152,11 +205,31 @@ export default function CardListing({ listings }: CardListingProps) {
 													Cancel
 												</Button>
 											</DialogClose>
+											<Button
+												onClick={handlePurchase}
+												disabled={!isConnected || isLoadingProcess}
+												className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-mono font-bold"
+											>
+												{isLoadingProcess ? (
+													<>
+														<Loader2 className="w-4 h-4 mr-2 animate-spin" />
+														Processing...
+													</>
+												) : (
+													<>
+														<DollarSign className="w-4 h-4 mr-2" />
+														Buy for {item.price} BNB
+													</>
+												)}
+											</Button>
+										</div>
+											
+										{!isConnected && (
+											<p className="text-center text-slate-400 font-mono text-sm">
+												Connect your wallet to purchase
+											</p>
 										)}
-										slides={[0]}
-										listing={item}
-										options={{ loop: false }}
-									/>
+									</div>
 								</div>
 							</DialogContent>
 						</Dialog>
