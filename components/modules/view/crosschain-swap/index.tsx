@@ -7,11 +7,8 @@ import SwapInterface from "./components/swap-interface";
 import rubicConfiguration from "./config/config";
 import { RubicSDKProvider } from "./components/rubic-sdk-context";
 import useWalletConnector from "./hooks/use-wallet-connector";
-import { RefreshCcw } from "lucide-react";
 import { installProxyFetch } from "./utils/proxy-fetch";
 import { debug, logError, monitorFetch } from "./utils/debug";
-import { HeaderContent } from "../../header";
-import { terms } from "./data/swap-data";
 
 // Main cross-chain swap component
 export default function CrossChainSwap() {
@@ -260,14 +257,7 @@ export default function CrossChainSwap() {
     };
 
     return (
-        <div className="space-y-6">
-            {/* Header with title */}
-            <HeaderContent
-                headline={terms.headline}
-                subheadline={terms.subheadline}
-                Icon={RefreshCcw}
-            />
-
+        <div className="space-y-6 p-6">
             {combinedError && (
                 <Card className="mb-6 border-red-400 bg-red-50 dark:bg-red-900/20">
                     <CardContent className="p-4">
