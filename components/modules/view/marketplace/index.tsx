@@ -44,7 +44,7 @@ import CardStats from "../../card/stats";
 import ButtonCustom from "../../button/custom";
 import CardListing from "../../card/listing";
 import CardIcons from "../../card/icons";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import CardCustom from "../../card/custom";
 import SellCarousel from "../../carousel/sell";
 import BuyCarousel from "../../carousel/buy";
@@ -320,22 +320,24 @@ export default function MarketplaceView() {
                                 </div>
                             </DialogTrigger>
                             <DialogContent className="max-w-[600px] bg-[#000513]">
-                                <CardCustom
-                                    className="rounded-2xl"
-                                    gradient="three-points-gradient-light"
-                                    border="three-points-gradient-border-listing"
-                                    content={(
-                                        <div className="p-4">
-                                            <div className="flex items-center space-x-3">
-                                                <Plus className="w-6 h-6 text-cyan-400 drop-shadow-sm" />
-                                                <CardTitle className="text-white font-mono text-xl">Create New Listing</CardTitle>
+                                <DialogTitle>
+                                    <CardCustom
+                                        className="rounded-2xl"
+                                        gradient="three-points-gradient-light"
+                                        border="three-points-gradient-border-listing"
+                                        content={(
+                                            <div className="p-4">
+                                                <div className="flex items-center space-x-3">
+                                                    <Plus className="w-6 h-6 text-cyan-400 drop-shadow-sm" />
+                                                    <CardTitle className="text-white font-mono text-xl">Create New Listing</CardTitle>
+                                                </div>
+                                                <p className="text-slate-400 font-mono text-sm">
+                                                    List your locked LP tokens for sale to other traders
+                                                </p>
                                             </div>
-                                            <p className="text-slate-400 font-mono text-sm">
-                                                List your locked LP tokens for sale to other traders
-                                            </p>
-                                        </div>
-                                    )}
-                                />
+                                        )}
+                                    />
+                                </DialogTitle>
                                 <div className="w-full mt-4">
                                     <SellCarousel slides={[0, 1, 2]} options={{ loop: false }} />
                                 </div>
@@ -358,24 +360,26 @@ export default function MarketplaceView() {
                                 </div>
                             </DialogTrigger>
                             <DialogContent className="max-w-[600px] bg-[#000513]">
-                                <CardCustom
-                                    className="rounded-2xl"
-                                    gradient="three-points-gradient-light"
-                                    border="three-points-gradient-border-listing"
-                                    content={(
-                                        <div className="p-4">
-                                            <div className="flex items-center space-x-3">
-                                                <List className="w-6 h-6 text-cyan-400 drop-shadow-sm" />
-                                                <CardTitle className="text-white font-mono text-xl">
-                                                    Live Marketplace Listings
-                                                </CardTitle>
+                                <DialogTitle>
+                                    <CardCustom
+                                        className="rounded-2xl"
+                                        gradient="three-points-gradient-light"
+                                        border="three-points-gradient-border-listing"
+                                        content={(
+                                            <div className="p-4">
+                                                <div className="flex items-center space-x-3">
+                                                    <List className="w-6 h-6 text-cyan-400 drop-shadow-sm" />
+                                                    <CardTitle className="text-white font-mono text-xl">
+                                                        Live Marketplace Listings
+                                                    </CardTitle>
+                                                </div>
+                                                <p className="text-slate-400 font-mono text-sm">
+                                                    Real-time data from BSC Testnet contract
+                                                </p>
                                             </div>
-                                            <p className="text-slate-400 font-mono text-sm">
-                                                Real-time data from BSC Testnet contract
-                                            </p>
-                                        </div>
-                                    )}
-                                />
+                                        )}
+                                    />
+                                </DialogTitle>
                                 <div className="w-full mt-4">
                                     <BuyCarousel slides={mockListings} options={{ loop: false }} />
                                 </div>
