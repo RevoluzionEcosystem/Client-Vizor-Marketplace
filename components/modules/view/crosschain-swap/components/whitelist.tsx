@@ -300,13 +300,13 @@ const hardcodedTokens: Record<string, Token[]> = {
             symbol: "WBNB",
             decimals: 18,
             address: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
-            image: "/assets/images/w3w.svg",
+            image: "/assets/images/vzr.svg",
             title: "WBNB",
             chainId: 56
         },
         {
             name: "Vizor",
-            symbol: "W3W",
+            symbol: "VZR",
             decimals: 18,
             address: "0x0079914B3C6fF1867b62c2CF8F108126970EAb6e",
             image: "/assets/tokens/CAKE.svg",
@@ -399,7 +399,7 @@ const hardcodedTokens: Record<string, Token[]> = {
             symbol: "RVZ",
             decimals: 9,
             address: "0x7D89c67d3c4E72E8c5c64BE201dC225F99d16aCa",
-            image: "/assets/tokens/w3w.svg",
+            image: "/assets/tokens/vzr.svg",
             title: "RVZ",
             chainId: 56
         }

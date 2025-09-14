@@ -122,7 +122,7 @@ export interface GeneralContent {
 // Main content export as a constant
 export const general: GeneralContent = {
     project_title: "Vizor",
-    project_acronym: "W3W",
+    project_acronym: "VZR",
     project_description: "Vizor: Blockchain investment and staking rewards platform.",
     project_copyright: "© 2023—2025 - Vizor | All rights reserved",
     developed_by: "Developed by",

@@ -22,7 +22,7 @@ const legalDocuments = {
         "This document includes information on compliance with laws and regulations, guidelines for handling legal disputes, and procedures for reporting and addressing potential legal issues inclusive of entire Vizor and its subsidiaries.",
     titlePrivacyPolicy: "Vizor Privacy Policy",
     descriptionPrivacyPolicy:
-        "©2021 Website, dApps, Apps platform developer Vizor www.vizor.app, Vizor Mobile Wallet App, W3W cryptocurrency are owned by Vizor.",
+        "©2021 Website, dApps, Apps platform developer Vizor www.vizor.app, Vizor Mobile Wallet App, VZR cryptocurrency are owned by Vizor.",
     titleTermsAndConditions: "Vizor Terms and Conditions",
     descriptionTermsAndConditions:
         'This Agreement contains important information, including a binding arbitration provision and a class action waiver, that affect your rights and how disputes are resolved. You should only access the Interface if you agree completely with these terms. By accessing or using the Vizor platform (the "Service"), you agree to be bound by these terms of service (the "Terms"). If you do not agree to these Terms, you may not use the Service.',    /* ─────────────── LEGAL POLICY ─────────────────────────────────── */
@@ -190,7 +190,7 @@ const legalDocuments = {
             {
                 title: "Purpose of Tokens",
                 content:
-                    "Vizor (\"we,\" \"us,\" or \"our\") issues cryptocurrency tokens (the \"W3W\") to facilitate the use of our products and services. The Tokens may be used to access certain features of our platform, to make payments for in‑game transactions, advertising, or services, or for other purposes as determined by us."
+                    "Vizor (\"we,\" \"us,\" or \"our\") issues cryptocurrency tokens (the \"VZR\") to facilitate the use of our products and services. The Tokens may be used to access certain features of our platform, to make payments for in‑game transactions, advertising, or services, or for other purposes as determined by us."
             },
             {
                 title: "Token Holder Representations and Warranties",

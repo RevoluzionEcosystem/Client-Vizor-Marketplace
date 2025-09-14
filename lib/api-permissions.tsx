@@ -7,11 +7,14 @@ import { NextRequest } from 'next/server';
 
 // Authorized wallet addresses that can add/edit/delete investment projects
 const AUTHORIZED_ADDRESSES = [
-  '0x455A5f05D24CaDdC00e884ddF86a4bBBB3280862', // Fomotion
-  '0x9C48405d8E4d107C9DC033993d18D60F67380ca1', // Zack Wallet
-  '0x843bDDD324fA3ede7De5c958FA8E9c0995452795', // Kdub
-  '0x394669e81371BbEA86Ce29174Abf81DA71B3D851', // MrT
+  '0x9C48405d8E4d107C9DC033993d18D60F67380ca1', // Revoluzion Ecosystem Wallet
   // Add more authorized wallets as needed
+];
+
+// Admin wallet addresses that can access debug dashboard
+const ADMIN_ADDRESSES = [
+  '0x9C48405d8E4d107C9DC033993d18D60F67380ca1', // Revoluzion Ecosystem Wallet
+  // Add more admin wallets as needed
 ];
 
 /**
@@ -31,6 +34,15 @@ export function getWalletFromRequest(request: NextRequest): string | null {
   }
 
   return null;
+}
+
+/**
+ * Check if wallet address is authorized for admin access
+ */
+export function isAdminWallet(walletAddress: string | null): boolean {
+  if (!walletAddress) return false;
+
+  return ADMIN_ADDRESSES.some(addr => addr.toLowerCase() === walletAddress.toLowerCase());
 }
 
 /**

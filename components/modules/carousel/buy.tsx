@@ -23,6 +23,8 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { useMarketplaceWrite } from '../view/marketplace/hooks/use-marketplace-write'
 import { Badge } from '@/components/ui/badge'
+import { formatEther } from 'viem'
+import { getStatusText, getStatusColor } from '../view/marketplace/abi/marketplace-abi'
 
 type PropType = {
 	slides: number[] | any[]
@@ -117,6 +119,28 @@ const BuyCarousel: FC<PropType> = (props) => {
 									border="three-points-gradient-border-listing"
 									content={(
 										<div className="flex flex-col p-4 gap-4">
+											{/* Price and Status Header */}
+											<div className="flex items-center justify-between p-4 bg-slate-800/40 rounded-lg border border-cyan-400/20">
+												<div>
+													<p className="text-slate-400 font-mono text-xs mb-1">Listing Price</p>
+													<p className="text-cyan-400 font-bold font-mono text-2xl">
+														{listing.price ? formatEther(listing.price) : '0'} BNB
+													</p>
+												</div>
+												<div className="text-right">
+													<p className="text-slate-400 font-mono text-xs mb-1">Status</p>
+													<Badge className={`${getStatusColor(listing.status)} font-mono`}>
+														{getStatusText(listing.status)}
+													</Badge>
+												</div>
+											</div>
+
+											{/* Listing ID */}
+											<div className="flex items-center justify-between">
+												<span className="text-slate-400 font-mono text-sm">Listing ID:</span>
+												<span className="text-cyan-400 font-mono text-sm font-bold">#{listing.id?.toString()}</span>
+											</div>
+
 											{/* Seller and Buyer Info */}
 											<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 												<div className="flex items-center space-x-2">
@@ -251,6 +275,45 @@ const BuyCarousel: FC<PropType> = (props) => {
 													</div>
 												</div>
 											)}
+
+											{/* Purchase Action */}
+											<div className="border-t border-slate-700/50 pt-4 mt-4">
+												{listing.status === 0 ? (
+													<Button 
+														className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold font-mono py-3"
+														onClick={() => {
+															// TODO: Implement purchase logic
+															toast.info('Purchase functionality coming soon!');
+														}}
+													>
+														<DollarSign className="w-5 h-5 mr-2" />
+														Purchase for {listing.price ? formatEther(listing.price) : '0'} BNB
+													</Button>
+												) : listing.status === 1 ? (
+													<Button 
+														className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold font-mono py-3"
+														disabled
+													>
+														<Timer className="w-5 h-5 mr-2" />
+														In Escrow
+													</Button>
+												) : listing.status === 3 ? (
+													<Button 
+														className="w-full bg-green-600 text-white font-bold font-mono py-3"
+														disabled
+													>
+														<CheckCircle2 className="w-5 h-5 mr-2" />
+														Completed
+													</Button>
+												) : (
+													<Button 
+														className="w-full bg-slate-600 text-slate-300 font-bold font-mono py-3"
+														disabled
+													>
+														Not Available
+													</Button>
+												)}
+											</div>
 
 										</div>
 									)}

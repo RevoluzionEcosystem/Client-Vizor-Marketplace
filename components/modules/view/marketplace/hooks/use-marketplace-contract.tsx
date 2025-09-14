@@ -23,12 +23,13 @@ export function useMarketplaceContract() {
         });
     };
 
-    // Note: These functions are not available in the current ABI
-    // They would need to be added to the contract if needed
+    // Read the actual listing fee from the contract
     const useListingFee = () => {
-        // This would need to be implemented as a public state variable reader
-        // For now, we can use a default value
-        return { data: BigInt('10000000000000000') }; // 0.01 ETH in wei
+        return useReadContract({
+            address: MARKETPLACE_CONTRACT_ADDRESS,
+            abi: marketplaceAbi,
+            functionName: 'listingFee',
+        });
     };
 
     const useNextListingId = () => {

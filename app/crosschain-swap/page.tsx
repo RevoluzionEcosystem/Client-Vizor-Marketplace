@@ -11,7 +11,7 @@ const crosschainSwapJsonLd = {
   applicationCategory: 'DeFi Tools',
   offers: {
     '@type': 'Offer',
-    description: 'Cross-chain W3W token swaps with optimal rates and security'
+    description: 'Cross-chain VZR token swaps with optimal rates and security'
   },
   provider: {
     '@type': 'Organization',
@@ -23,7 +23,7 @@ const crosschainSwapJsonLd = {
 export const metadata: Metadata = {
   title: 'Cross-Chain Swap | Vizor',
   description: 'Swap tokens across different blockchains with the best rates and lowest fees. Powered by Rubic and protected by GoPlusLabs security.',
-  keywords: ['Cross-Chain Swap', 'Token Swap', 'DeFi', 'Multi-Chain', 'Vizor', 'W3W', 'Blockchain', 'Crypto'],
+  keywords: ['Cross-Chain Swap', 'Token Swap', 'DeFi', 'Multi-Chain', 'Vizor', 'VZR', 'Blockchain', 'Crypto'],
   openGraph: {
     title: 'Cross-Chain Swap | Vizor',
     description: 'Swap tokens across different blockchains with the best rates and lowest fees. Powered by Rubic and protected by GoPlusLabs security.',

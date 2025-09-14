@@ -35,38 +35,38 @@ interface CardListingProps {
 }
 
 export default function CardListing({ listings }: CardListingProps) {
-		const [error, setError] = useState<string | null>(null);
-		const [isLoadingProcess, setIsLoadingProcess] = useState(false);
-		const [success, setSuccess] = useState(false);
-		const { address, isConnected } = useAppKitAccount();
+	const [error, setError] = useState<string | null>(null);
+	const [isLoadingProcess, setIsLoadingProcess] = useState(false);
+	const [success, setSuccess] = useState(false);
+	const { address, isConnected } = useAppKitAccount();
 
-		const handlePurchase = async () => {
-			if (!isConnected) {
-				setError('Please connect your wallet');
-				return;
-			}
-	
-			setIsLoadingProcess(true);
-			setError(null);
-	
-			try {
-				// Simulate transaction for now - replace with actual contract call
-				await new Promise(resolve => setTimeout(resolve, 3000));
-				
-				setSuccess(true);
-				
-				setTimeout(() => {
-					setSuccess(false);
-					// onClose();
-				}, 3000);
-				
-			} catch (err: any) {
-				setError(err.message || 'Failed to purchase listing');
-			} finally {
-				setIsLoadingProcess(false);
-			}
-		};
-	
+	const handlePurchase = async () => {
+		if (!isConnected) {
+			setError('Please connect your wallet');
+			return;
+		}
+
+		setIsLoadingProcess(true);
+		setError(null);
+
+		try {
+			// Simulate transaction for now - replace with actual contract call
+			await new Promise(resolve => setTimeout(resolve, 3000));
+
+			setSuccess(true);
+
+			setTimeout(() => {
+				setSuccess(false);
+				// onClose();
+			}, 3000);
+
+		} catch (err: any) {
+			setError(err.message || 'Failed to purchase listing');
+		} finally {
+			setIsLoadingProcess(false);
+		}
+	};
+
 	return (
 		<CardCustom
 			className="min-h-[50vh] rounded-2xl"
@@ -179,7 +179,7 @@ export default function CardListing({ listings }: CardListingProps) {
 									/>
 								</DialogTitle>
 								<div className="w-full mt-4">
-								    <BuyCarousel
+									<BuyCarousel
 										slides={[0]}
 										listing={item}
 										options={{ loop: false }}
@@ -223,7 +223,7 @@ export default function CardListing({ listings }: CardListingProps) {
 												)}
 											</Button>
 										</div>
-											
+
 										{!isConnected && (
 											<p className="text-center text-slate-400 font-mono text-sm">
 												Connect your wallet to purchase

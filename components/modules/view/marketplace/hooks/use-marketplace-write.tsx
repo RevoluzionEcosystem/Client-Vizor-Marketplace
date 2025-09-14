@@ -1,4 +1,4 @@
-import { useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi';
+import { useWriteContract, useWaitForTransactionReceipt, useAccount, useReadContract } from 'wagmi';
 import { parseEther } from 'viem';
 import { bscTestnet } from 'wagmi/chains';
 import { marketplaceAbi, MARKETPLACE_CONTRACT_ADDRESS } from '../abi/marketplace-abi';
@@ -16,6 +16,13 @@ export function useMarketplaceWrite() {
             hash,
         });
 
+    // Read the current listing fee from the contract
+    const { data: listingFeeData, error: listingFeeError } = useReadContract({
+        address: MARKETPLACE_CONTRACT_ADDRESS,
+        abi: marketplaceAbi,
+        functionName: 'listingFee',
+    });
+
     const createListing = async (
         price: string,
         tokenAddress: string,
@@ -32,6 +39,11 @@ export function useMarketplaceWrite() {
             setIsLoading(true);
             setError(null);
             
+            // Use the actual listing fee from the contract, fallback to 0.01 BNB if not available
+            const listingFeeValue = listingFeeData || parseEther('0.01');
+            
+            console.log('Creating listing with fee:', listingFeeValue.toString());
+            
             await writeContract({
                 address: MARKETPLACE_CONTRACT_ADDRESS,
                 abi: marketplaceAbi,
@@ -42,7 +54,7 @@ export function useMarketplaceWrite() {
                     lockUrl,
                     contactMethod
                 ],
-                value: parseEther('0.01'), // Default listing fee (0.01 BNB)
+                value: listingFeeValue,
                 chain: bscTestnet,
                 account: address
             });

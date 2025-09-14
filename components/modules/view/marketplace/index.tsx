@@ -35,11 +35,10 @@ import {
     List
 } from "lucide-react";
 import { useAppKitAccount } from '@reown/appkit/react';
-import { ListingStatus, getStatusText, getStatusColor } from './abi/marketplace-abi';
-import { RealAnalyticsView } from './components/real-analytics-view';
-import { CreateListingForm } from './components/create-listing-form-new';
-import { PurchaseModal } from './components/purchase-modal-new';
-import { RealListingsView } from './components/real-listings-view';
+import { DebugMarketplace } from './components/debug-marketplace';
+import { useMarketplaceListings } from './hooks/use-marketplace-listings';
+import { isAdminWallet } from '@/lib/api-permissions';
+import { useRouter } from 'next/navigation';
 import CardStats from "../../card/stats";
 import ButtonCustom from "../../button/custom";
 import CardListing from "../../card/listing";
@@ -64,42 +63,27 @@ const staggerContainer = {
     }
 };
 
-const mockListings = [
-	{
-		name: "DROPS/WETH",
-		value: "5 ETH",
-		status: "Locked",
-		duration: "30 days",
-		action: "View"
-	},
-	{
-		name: "DROPS/WETH",
-		value: "5 ETH",
-		status: "Locked",
-		duration: "30 days",
-		action: "View"
-	},
-	{
-		name: "DROPS/WETH",
-		value: "5 ETH",
-		status: "Locked",
-		duration: "30 days",
-		action: "View"
-	},
-	{
-		name: "DROPS/WETH",
-		value: "5 ETH",
-		status: "Locked",
-		duration: "30 days",
-		action: "View"
-	}
-]
-
 export default function MarketplaceView() {
     const [selectedTab, setSelectedTab] = useState("browse");
     const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
     const [selectedListing, setSelectedListing] = useState<any>(null);
     const { address, isConnected } = useAppKitAccount();
+    const router = useRouter();
+    
+    // Check if current user is admin
+    const isAdmin = isConnected && address ? isAdminWallet(address) : false;
+    
+    // Fetch real marketplace data
+    const { 
+        formattedListings, 
+        isLoading: isLoadingListings, 
+        error: listingsError, 
+        availableListings,
+        totalListings,
+        availableCount,
+        inEscrowCount,
+        completedCount 
+    } = useMarketplaceListings();
 
     const ListingCard = ({ listing }: { listing: any }) => {
         const getStatusColor = (status: string) => {
@@ -296,6 +280,25 @@ export default function MarketplaceView() {
             variants={staggerContainer}
             className="space-y-6 p-6"
         >
+            {/* Debug Info */}
+            <motion.div variants={fadeInUp}>
+                <DebugMarketplace />
+                {formattedListings.length > 0 && (
+                    <div className="mb-4 p-4 bg-green-900/20 border border-green-400/30 rounded-lg">
+                        <div className="text-green-400 font-mono text-sm">
+                            ✅ Successfully loaded {formattedListings.length} listings from BSC Testnet contract
+                        </div>
+                    </div>
+                )}
+                {formattedListings.length === 0 && !isLoadingListings && (
+                    <div className="mb-4 p-4 bg-yellow-900/20 border border-yellow-400/30 rounded-lg">
+                        <div className="text-yellow-400 font-mono text-sm">
+                            ⚠️ No listings found on contract. Create a new listing to test the marketplace.
+                        </div>
+                    </div>
+                )}
+            </motion.div>
+
             {/* Header */}
             <motion.div variants={fadeInUp}>
                 <div className="text-[#1DBBFF] grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 align-middle">
@@ -350,7 +353,7 @@ export default function MarketplaceView() {
                                         title={(
                                             <h2 className={`flex gap-1 items-center align-middle`}>
                                                 <BanknoteArrowUp className={`mr-2`} />
-                                                Buy <span className="hidden md:block">Locked Positions</span>
+                                                View <span className="hidden md:block">My Dashboard</span>
                                             </h2>
                                         )}
                                         variant={`custom`}
@@ -370,7 +373,7 @@ export default function MarketplaceView() {
                                                 <div className="flex items-center space-x-3">
                                                     <List className="w-6 h-6 text-cyan-400 drop-shadow-sm" />
                                                     <CardTitle className="text-white font-mono text-xl">
-                                                        Live Marketplace Listings
+                                                        Live Marketplace Listings ({totalListings})
                                                     </CardTitle>
                                                 </div>
                                                 <p className="text-slate-400 font-mono text-sm">
@@ -381,10 +384,48 @@ export default function MarketplaceView() {
                                     />
                                 </DialogTitle>
                                 <div className="w-full mt-4">
-                                    <BuyCarousel slides={mockListings} options={{ loop: false }} />
+                                    {isLoadingListings ? (
+                                        <div className="text-center text-slate-400 p-8">
+                                            <div className="animate-spin inline-block w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full mb-2"></div>
+                                            <div>Loading listings...</div>
+                                        </div>
+                                    ) : availableListings.length > 0 ? (
+                                        <BuyCarousel 
+                                            slides={[0]} 
+                                            listing={availableListings[0]} 
+                                            options={{ loop: false }} 
+                                        />
+                                    ) : formattedListings.length > 0 ? (
+                                        <div className="text-center text-yellow-400 p-8">
+                                            <AlertCircle className="w-12 h-12 mx-auto mb-2" />
+                                            <div className="font-mono text-lg">No Available Listings</div>
+                                            <div className="text-sm text-slate-400 mt-2">All current listings are sold or in escrow</div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-center text-slate-400 p-8">
+                                            <List className="w-12 h-12 mx-auto mb-2" />
+                                            <div className="font-mono text-lg">No Listings Found</div>
+                                            <div className="text-sm text-slate-400 mt-2">Be the first to create a listing!</div>
+                                        </div>
+                                    )}
                                 </div>
                             </DialogContent>
                         </Dialog>
+                        
+                        {/* Admin Debug Button - Only visible to authorized wallets */}
+                        {isAdmin && (
+                            <ButtonCustom
+                                title={(
+                                    <h2 className={`flex gap-1 items-center align-middle`}>
+                                        <Shield className={`mr-2`} />
+                                        Admin <span className="hidden md:block">Debug Panel</span>
+                                    </h2>
+                                )}
+                                variant={`custom`}
+                                onClick={() => router.push('/admin/debug')}
+                                className={`button-gradient rounded-full mb-4 border-purple-500/50 hover:border-purple-400/70`}
+                            />
+                        )}
                     </div>
                 </div>
             </motion.div>
@@ -404,7 +445,7 @@ export default function MarketplaceView() {
                                 )}
                             />
                         )}
-                        title={`128`}
+                        title={`${availableCount}`}
                         description={`Active Pairs`}
                     />
                     <CardStats
@@ -419,8 +460,8 @@ export default function MarketplaceView() {
                                 )}
                             />
                         )}
-                        title={`134 ETH`}
-                        description={`Locked Liquidity Available`}
+                        title={`${totalListings}`}
+                        description={`Total Listings`}
                     />
                     <CardStats
                         className={`text-white`}
@@ -434,8 +475,8 @@ export default function MarketplaceView() {
                                 )}
                             />
                         )}
-                        title={`502 ETH`}
-                        description={`Unlocked Liquidity`}
+                        title={`${inEscrowCount}`}
+                        description={`In Escrow`}
                     />
                     <CardStats
                         className={`text-white`}
@@ -449,55 +490,37 @@ export default function MarketplaceView() {
                                 )}
                             />
                         )}
-                        title={`875 ETH`}
-                        description={`Liquidity Sold`}
+                        title={`${completedCount}`}
+                        description={`Completed Sales`}
                     />
                 </div>
             </motion.div>
             
             {/* Main Content */}
             <motion.div variants={fadeInUp}>
-                <CardListing
-                    listings={mockListings}
-                />
+                {isLoadingListings ? (
+                    <div className="flex justify-center items-center p-8">
+                        <div className="text-cyan-400 font-mono">Loading marketplace data from BSC Testnet...</div>
+                    </div>
+                ) : listingsError ? (
+                    <div className="flex justify-center items-center p-8">
+                        <div className="text-red-400 font-mono">Error loading marketplace data from contract</div>
+                    </div>
+                ) : formattedListings.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center p-12 bg-slate-900/50 rounded-2xl border border-slate-700/30">
+                        <List className="w-16 h-16 text-slate-600 mb-4" />
+                        <h3 className="text-slate-400 font-mono text-xl mb-2">No Listings Found</h3>
+                        <p className="text-slate-500 font-mono text-center max-w-md">
+                            No listings have been created on the BSC Testnet marketplace contract yet. 
+                            Be the first to list your locked LP position!
+                        </p>
+                    </div>
+                ) : (
+                    <CardListing
+                        listings={formattedListings}
+                    />
+                )}
             </motion.div>
-
-            {/* <motion.div variants={fadeInUp}>
-                <Card className="bg-slate-900/90 border-cyan-400/20 shadow-xl backdrop-blur-sm">
-                    <CardContent className="p-6">
-                        
-                        <RealListingsView 
-                            onPurchase={(listingId) => {
-                                // Find the listing to set for purchase modal
-                                // For now, we'll create a mock listing object
-                                const mockListing = {
-                                    id: listingId,
-                                    price: "0", // Will be fetched from contract
-                                    tokenPair: "Unknown",
-                                    seller: "0x...",
-                                    lockUrl: "",
-                                    unlockDate: ""
-                                };
-                                setSelectedListing(mockListing);
-                                setPurchaseModalOpen(true);
-                            }}
-                        />
-        
-                    </CardContent>
-                </Card>
-            </motion.div> */}
-
-            {/* Purchase Modal */}
-            {/* {selectedListing && (
-                <PurchaseModal
-                    isOpen={purchaseModalOpen}
-                    onClose={() => {
-                        setPurchaseModalOpen(false);
-                        setSelectedListing(null);
-                    }}
-                    listing={selectedListing}
-                />
-            )} */}
         </motion.div>
     );
 }

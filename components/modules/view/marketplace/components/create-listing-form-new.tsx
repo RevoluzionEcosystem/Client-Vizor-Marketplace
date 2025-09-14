@@ -5,12 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useAppKitAccount, useAppKit } from '@reown/appkit/react';
 import { useMarketplaceWrite } from '../hooks/use-marketplace-write';
-import { Plus, Loader2, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Plus, Loader2, CheckCircle2, AlertCircle, ExternalLink, Wallet } from 'lucide-react';
 
 export function CreateListingForm() {
     const { address, isConnected } = useAppKitAccount();
+    const { open } = useAppKit();
     const { 
         createListing, 
         isLoading, 
@@ -43,9 +44,34 @@ export function CreateListingForm() {
             return;
         }
 
-        // Basic validation
+        // Enhanced validation
         if (!formData.price || !formData.tokenAddress || !formData.lpAddress || !formData.lockUrl || !formData.contactMethod) {
             toast.error("Please fill in all required fields");
+            return;
+        }
+
+        // Validate price
+        if (isNaN(Number(formData.price)) || Number(formData.price) <= 0) {
+            toast.error("Please enter a valid price greater than 0");
+            return;
+        }
+
+        // Validate addresses (basic check for 0x prefix and length)
+        if (!formData.tokenAddress.startsWith('0x') || formData.tokenAddress.length !== 42) {
+            toast.error("Please enter a valid token address");
+            return;
+        }
+
+        if (!formData.lpAddress.startsWith('0x') || formData.lpAddress.length !== 42) {
+            toast.error("Please enter a valid LP token address");
+            return;
+        }
+
+        // Validate URL format
+        try {
+            new URL(formData.lockUrl);
+        } catch {
+            toast.error("Please enter a valid lock URL");
             return;
         }
 
@@ -117,37 +143,38 @@ export function CreateListingForm() {
     }
 
     return (
-        <Card className="bg-slate-900/90 border-slate-700/50 shadow-2xl shadow-cyan-500/10">
-            <CardHeader className="border-b border-slate-700/50">
-                <div className="flex items-center space-x-3">
-                    <Plus className="w-6 h-6 text-cyan-400 drop-shadow-sm" />
-                    <CardTitle className="text-white font-mono text-xl">Create New Listing</CardTitle>
-                </div>
-                <p className="text-slate-400 font-mono text-sm">
-                    List your locked LP tokens for sale to other traders
-                </p>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                {/* Connection Status */}
-                <div className="flex items-center justify-between p-4 bg-slate-800/60 border border-slate-700/50 rounded-lg shadow-lg">
+        <div className="relative">
+            <Card className="bg-slate-900/90 border-slate-700/50 shadow-2xl shadow-cyan-500/10">
+                <CardHeader className="border-b border-slate-700/50">
                     <div className="flex items-center space-x-3">
-                        <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-cyan-400 shadow-cyan-400/50 shadow-sm' : 'bg-red-400 shadow-red-400/50 shadow-sm'}`} />
-                        <span className="text-white font-mono text-sm">
-                            {isConnected ? `Connected: ${address?.slice(0, 8)}...` : 'Wallet Not Connected'}
-                        </span>
+                        <Plus className="w-6 h-6 text-cyan-400 drop-shadow-sm" />
+                        <CardTitle className="text-white font-mono text-xl">Create New Listing</CardTitle>
                     </div>
-                    <Badge className="bg-cyan-400/20 text-cyan-400 border-cyan-400/30 font-mono shadow-sm">
-                        BSC Testnet
-                    </Badge>
-                </div>
+                    <p className="text-slate-400 font-mono text-sm">
+                        List your locked LP tokens for sale to other traders
+                    </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    {/* Connection Status */}
+                    <div className="flex items-center justify-between p-4 bg-slate-800/60 border border-slate-700/50 rounded-lg shadow-lg">
+                        <div className="flex items-center space-x-3">
+                            <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-cyan-400 shadow-cyan-400/50 shadow-sm' : 'bg-red-400 shadow-red-400/50 shadow-sm'}`} />
+                            <span className="text-white font-mono text-sm">
+                                {isConnected ? `Connected: ${address?.slice(0, 8)}...` : 'Wallet Not Connected'}
+                            </span>
+                        </div>
+                        <Badge className="bg-cyan-400/20 text-cyan-400 border-cyan-400/30 font-mono shadow-sm">
+                            BSC Testnet
+                        </Badge>
+                    </div>
 
-                {/* Error Display */}
-                {contractError && (
-                    <div className="flex items-center space-x-3 p-4 bg-red-900/30 border border-red-500/40 rounded-lg shadow-lg shadow-red-500/10">
-                        <AlertCircle className="w-5 h-5 text-red-400" />
-                        <span className="text-red-300 font-mono text-sm">{contractError}</span>
-                    </div>
-                )}
+                    {/* Error Display */}
+                    {contractError && (
+                        <div className="flex items-center space-x-3 p-4 bg-red-900/30 border border-red-500/40 rounded-lg shadow-lg shadow-red-500/10">
+                            <AlertCircle className="w-5 h-5 text-red-400" />
+                            <span className="text-red-300 font-mono text-sm">{contractError}</span>
+                        </div>
+                    )}
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-5">{/* ...existing code... */}
@@ -251,7 +278,7 @@ export function CreateListingForm() {
                     <Button
                         type="submit"
                         disabled={!isConnected || isLoading || isConfirming}
-                        className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-mono py-3 shadow-lg shadow-cyan-500/25 border border-cyan-500/30 transition-all duration-200"
+                        className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-mono py-3 shadow-lg shadow-cyan-500/25 border border-cyan-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isLoading ? (
                             <div className="flex items-center space-x-2">
@@ -267,6 +294,14 @@ export function CreateListingForm() {
                             'Create Listing'
                         )}
                     </Button>
+
+                    {/* Debug Info for Button State */}
+                    <div className="text-xs font-mono text-slate-500 mt-2">
+                        Button disabled: {(!isConnected || isLoading || isConfirming).toString()} | 
+                        Connected: {isConnected.toString()} | 
+                        Loading: {isLoading.toString()} | 
+                        Confirming: {isConfirming.toString()}
+                    </div>
                 </form>
 
                 {/* Transaction Hash */}
@@ -286,5 +321,32 @@ export function CreateListingForm() {
                 )}
             </CardContent>
         </Card>
+
+        {/* Wallet Connection Overlay */}
+        {!isConnected && (
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm rounded-lg flex items-center justify-center z-10">
+                <div className="text-center p-8 bg-slate-900/90 border border-slate-700/50 rounded-xl shadow-2xl shadow-cyan-500/10 max-w-md mx-4">
+                    <div className="mb-6">
+                        <div className="w-16 h-16 bg-cyan-400/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Wallet className="w-8 h-8 text-cyan-400" />
+                        </div>
+                        <h3 className="text-white font-mono text-xl font-bold mb-2">
+                            Connect Your Wallet
+                        </h3>
+                        <p className="text-slate-400 font-mono text-sm">
+                            You need to connect your wallet to create a listing on the marketplace
+                        </p>
+                    </div>
+                    <Button
+                        onClick={() => open()}
+                        className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-mono py-3 shadow-lg shadow-cyan-500/25 border border-cyan-500/30 transition-all duration-200"
+                    >
+                        <Wallet className="w-4 h-4 mr-2" />
+                        Connect Wallet
+                    </Button>
+                </div>
+            </div>
+        )}
+    </div>
     );
 }

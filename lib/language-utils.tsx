@@ -1,5 +1,5 @@
 /**
- * Language utilities and configuration for W3W
+ * Language utilities and configuration for Vizor
  */
 
 /**

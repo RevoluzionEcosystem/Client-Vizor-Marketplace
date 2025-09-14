@@ -14,9 +14,9 @@ import Image from 'next/image'
 import img1 from "@/public/assets/images/progress-1.png"
 import img2 from "@/public/assets/images/progress-2.png"
 import img3 from "@/public/assets/images/progress-3.png"
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useAppKitAccount, useAppKit } from '@reown/appkit/react';
 
-import { Plus, Loader2, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Plus, Loader2, CheckCircle2, AlertCircle, ExternalLink, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -33,6 +33,7 @@ const SellCarousel: FC<PropType> = (props) => {
 	const [emblaRef, emblaApi] = useEmblaCarousel(options)
 	const [index, setIndex] = useState(0)
 	const { address, isConnected } = useAppKitAccount();
+	const { open } = useAppKit();
 
 
 	const { 
@@ -127,8 +128,9 @@ const SellCarousel: FC<PropType> = (props) => {
 	}
 
 	return (
-		<section className="embla">
-			<div className="embla__viewport" ref={emblaRef}>
+		<div className="relative">
+			<section className="embla">
+				<div className="embla__viewport" ref={emblaRef}>
 				{/* <div className="embla__container"> */}
 
 					{/* Form */}
@@ -313,6 +315,33 @@ const SellCarousel: FC<PropType> = (props) => {
 				</div>
 			</div>
 		</section>
+
+		{/* Wallet Connection Overlay */}
+		{!isConnected && (
+			<div className="absolute inset-0 bg-black/70 backdrop-blur-sm rounded-lg flex items-center justify-center z-10">
+				<div className="text-center p-8 bg-slate-900/90 border border-slate-700/50 rounded-xl shadow-2xl shadow-cyan-500/10 max-w-md mx-4">
+					<div className="mb-6">
+						<div className="w-16 h-16 bg-cyan-400/20 rounded-full flex items-center justify-center mx-auto mb-4">
+							<Wallet className="w-8 h-8 text-cyan-400" />
+						</div>
+						<h3 className="text-white font-mono text-xl font-bold mb-2">
+							Connect Your Wallet
+						</h3>
+						<p className="text-slate-400 font-mono text-sm">
+							You need to connect your wallet to create a listing on the marketplace
+						</p>
+					</div>
+					<Button
+						onClick={() => open()}
+						className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-mono py-3 shadow-lg shadow-cyan-500/25 border border-cyan-500/30 transition-all duration-200"
+					>
+						<Wallet className="w-4 h-4 mr-2" />
+						Connect Wallet
+					</Button>
+				</div>
+			</div>
+		)}
+	</div>
 	)
 }
 

@@ -145,7 +145,7 @@ export function useTokenData() {
             }
         },        token_info: {
             name: "Web3 Whales",
-            symbol: "W3W",
+            symbol: "VZR",
             price: '$0.011163',
             price_raw: 0.011163,
             market_cap: '$1.04M',

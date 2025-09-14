@@ -83,7 +83,7 @@ const TOKEN_ICON_MAP: Record<string, IconMapEntry> = {
         aliases: ['weth', 'wrapped ethereum', 'wrapped-ethereum']
     },
     'revoluzion': {
-        path: 'w3w.svg',
+        path: 'RVZ.svg',
         aliases: ['rvz', 'revoluzion']
     },
     'apocalypse': {
@@ -95,8 +95,8 @@ const TOKEN_ICON_MAP: Record<string, IconMapEntry> = {
         aliases: ['lzn', 'launchzone']
     },
     'vizor': {
-        path: 'w3w.svg',
-        aliases: ['w3w', 'W3W']
+        path: 'VZR.svg',
+        aliases: ['vzr', 'VZR']
     },
 
     // All other tokens
@@ -1734,7 +1734,7 @@ const TOKEN_ICON_MAP: Record<string, IconMapEntry> = {
     'vv': { path: 'VV.svg', aliases: ['vv', 'VV'] },
     'vvs': { path: 'VVS.svg', aliases: ['vvs', 'VVS'] },
     'vxv': { path: 'VXV.svg', aliases: ['vxv', 'VXV'] },
-    'w3w': { path: 'W3W.svg', aliases: ['w3w', 'W3W'] },
+    'vzr': { path: 'VZR.svg', aliases: ['vzr', 'VZR'] },
     'wacme': { path: 'WACME.svg', aliases: ['wacme', 'WACME'] },
     'wagmi': { path: 'WAGMI.svg', aliases: ['wagmi', 'WAGMI'] },
     'wagmigames': { path: 'WAGMIGAMES.svg', aliases: ['wagmigames', 'WAGMIGAMES'] },
