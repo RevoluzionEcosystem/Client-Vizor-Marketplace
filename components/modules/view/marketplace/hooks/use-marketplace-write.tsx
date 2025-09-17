@@ -1,4 +1,4 @@
-import { useWriteContract, useWaitForTransactionReceipt, useAccount, useReadContract } from 'wagmi';
+import { useWriteContract, useWaitForTransactionReceipt, useAccount, useReadContract, useChainId } from 'wagmi';
 import { parseEther } from 'viem';
 import { bscTestnet } from 'wagmi/chains';
 import { marketplaceAbi, MARKETPLACE_CONTRACT_ADDRESS } from '../abi/marketplace-abi';
@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 export function useMarketplaceWrite() {
     const { address } = useAccount();
+    const chainId = useChainId();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     
@@ -35,6 +36,12 @@ export function useMarketplaceWrite() {
             return;
         }
 
+        // Check if we're on BSC Testnet
+        if (chainId !== bscTestnet.id) {
+            setError(`Please switch to BSC Testnet (Chain ID: ${bscTestnet.id}). Current chain: ${chainId}`);
+            return;
+        }
+
         try {
             setIsLoading(true);
             setError(null);
@@ -42,7 +49,38 @@ export function useMarketplaceWrite() {
             // Use the actual listing fee from the contract, fallback to 0.01 BNB if not available
             const listingFeeValue = listingFeeData || parseEther('0.01');
             
-            console.log('Creating listing with fee:', listingFeeValue.toString());
+            console.log('🔍 Creating listing with parameters:');
+            console.log('  - Price (original):', price);
+            console.log('  - Price (parsed):', parseEther(price).toString());
+            console.log('  - Token Address:', tokenAddress);
+            console.log('  - LP Address:', lpAddress);
+            console.log('  - Lock URL:', lockUrl);
+            console.log('  - Contact Method:', contactMethod);
+            console.log('  - Listing Fee:', listingFeeValue.toString());
+            console.log('  - User Address:', address);
+            
+            // Validate inputs before sending
+            if (!price || parseFloat(price) <= 0) {
+                throw new Error('Price must be greater than 0');
+            }
+            
+            if (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000') {
+                throw new Error('Invalid token address');
+            }
+            
+            if (!lpAddress || lpAddress === '0x0000000000000000000000000000000000000000') {
+                throw new Error('Invalid LP token address');
+            }
+            
+            if (!lockUrl || lockUrl.trim() === '') {
+                throw new Error('Lock URL cannot be empty');
+            }
+            
+            if (!contactMethod || contactMethod.trim() === '') {
+                throw new Error('Contact method cannot be empty');
+            }
+            
+            console.log('✅ All validations passed, submitting transaction...');
             
             await writeContract({
                 address: MARKETPLACE_CONTRACT_ADDRESS,
@@ -58,8 +96,24 @@ export function useMarketplaceWrite() {
                 chain: bscTestnet,
                 account: address
             });
+            
+            console.log('🚀 Transaction submitted successfully!');
         } catch (err: any) {
-            setError(err.message || 'Failed to create listing');
+            let errorMessage = 'Failed to create listing';
+            
+            if (err.message?.includes('User rejected')) {
+                errorMessage = 'Transaction was cancelled by user';
+            } else if (err.message?.includes('insufficient funds')) {
+                errorMessage = 'Insufficient funds for transaction fee';
+            } else if (err.message?.includes('network')) {
+                errorMessage = 'Network error - please check your connection';
+            } else if (err.message?.includes('gas')) {
+                errorMessage = 'Transaction failed due to gas issues';
+            } else if (err.message) {
+                errorMessage = err.message;
+            }
+            
+            setError(errorMessage);
             console.error('Error creating listing:', err);
         } finally {
             setIsLoading(false);
@@ -86,7 +140,21 @@ export function useMarketplaceWrite() {
                 account: address
             });
         } catch (err: any) {
-            setError(err.message || 'Failed to purchase listing');
+            let errorMessage = 'Failed to purchase listing';
+            
+            if (err.message?.includes('User rejected')) {
+                errorMessage = 'Transaction was cancelled by user';
+            } else if (err.message?.includes('insufficient funds')) {
+                errorMessage = 'Insufficient funds for purchase';
+            } else if (err.message?.includes('network')) {
+                errorMessage = 'Network error - please check your connection';
+            } else if (err.message?.includes('gas')) {
+                errorMessage = 'Transaction failed due to gas issues';
+            } else if (err.message) {
+                errorMessage = err.message;
+            }
+            
+            setError(errorMessage);
             console.error('Error purchasing listing:', err);
         } finally {
             setIsLoading(false);

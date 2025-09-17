@@ -38,31 +38,40 @@ export function CreateListingForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log('🔄 Form submission started');
+        console.log('📝 Form data:', formData);
+        console.log('🔗 Connected:', isConnected);
+        console.log('⚡ Loading states:', { isLoading, isConfirming, isConfirmed });
         
         if (!isConnected) {
+            console.log('❌ Wallet not connected');
             toast.error("Please connect your wallet to create a listing");
             return;
         }
 
         // Enhanced validation
         if (!formData.price || !formData.tokenAddress || !formData.lpAddress || !formData.lockUrl || !formData.contactMethod) {
+            console.log('❌ Missing required fields');
             toast.error("Please fill in all required fields");
             return;
         }
 
         // Validate price
         if (isNaN(Number(formData.price)) || Number(formData.price) <= 0) {
+            console.log('❌ Invalid price:', formData.price);
             toast.error("Please enter a valid price greater than 0");
             return;
         }
 
         // Validate addresses (basic check for 0x prefix and length)
         if (!formData.tokenAddress.startsWith('0x') || formData.tokenAddress.length !== 42) {
+            console.log('❌ Invalid token address:', formData.tokenAddress);
             toast.error("Please enter a valid token address");
             return;
         }
 
         if (!formData.lpAddress.startsWith('0x') || formData.lpAddress.length !== 42) {
+            console.log('❌ Invalid LP address:', formData.lpAddress);
             toast.error("Please enter a valid LP token address");
             return;
         }
@@ -71,10 +80,12 @@ export function CreateListingForm() {
         try {
             new URL(formData.lockUrl);
         } catch {
+            console.log('❌ Invalid URL:', formData.lockUrl);
             toast.error("Please enter a valid lock URL");
             return;
         }
 
+        console.log('✅ All validations passed, calling createListing...');
         try {
             await createListing(
                 formData.price,
@@ -84,13 +95,30 @@ export function CreateListingForm() {
                 formData.contactMethod
             );
 
-            if (!contractError) {
-                toast.success("Your listing transaction has been submitted");
-            }
+            // Don't show success toast here - let the transaction state handle it
         } catch (err: any) {
-            toast.error(err.message || "Failed to create listing");
+            // Error is already handled in the hook, but we can add additional handling if needed
+            console.error('Create listing error:', err);
         }
     };
+
+    // Show success toast when transaction is submitted (hash available)
+    React.useEffect(() => {
+        if (hash && !isConfirming && !isConfirmed) {
+            toast.success("Your listing transaction has been submitted!", {
+                description: "Please wait for confirmation..."
+            });
+        }
+    }, [hash, isConfirming, isConfirmed]);
+
+    // Show error toast when there's a contract error
+    React.useEffect(() => {
+        if (contractError) {
+            toast.error("Failed to create listing", {
+                description: contractError
+            });
+        }
+    }, [contractError]);
 
     // Reset form when transaction is confirmed
     React.useEffect(() => {
@@ -302,6 +330,33 @@ export function CreateListingForm() {
                         Loading: {isLoading.toString()} | 
                         Confirming: {isConfirming.toString()}
                     </div>
+
+                    {/* Debug Test Button */}
+                    <Button
+                        type="button"
+                        onClick={() => {
+                            console.log('🔍 DEBUG INFO:');
+                            console.log('  Form Data:', formData);
+                            console.log('  Connected:', isConnected);
+                            console.log('  Address:', address);
+                            console.log('  Loading States:', { isLoading, isConfirming, isConfirmed });
+                            console.log('  Contract Error:', contractError);
+                            console.log('  Hash:', hash);
+                            
+                            // Test createListing with sample data
+                            const testData = {
+                                price: '1.0',
+                                tokenAddress: '0x1234567890123456789012345678901234567890',
+                                lpAddress: '0x0987654321098765432109876543210987654321',
+                                lockUrl: 'https://unicrypt.network/amm/pancake-v2/pair/0x123',
+                                contactMethod: 'telegram: @test'
+                            };
+                            console.log('  Test Data:', testData);
+                        }}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-mono py-2 text-sm"
+                    >
+                        🔍 Debug Info
+                    </Button>
                 </form>
 
                 {/* Transaction Hash */}

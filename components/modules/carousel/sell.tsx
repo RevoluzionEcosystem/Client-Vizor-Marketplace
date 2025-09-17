@@ -83,13 +83,30 @@ const SellCarousel: FC<PropType> = (props) => {
 				formData.contactMethod
 			);
 
-			if (!contractError) {
-				toast.success("Your listing transaction has been submitted");
-			}
+			// Don't show success toast here - let the transaction state handle it
 		} catch (err: any) {
-			toast.error(err.message || "Failed to create listing");
+			// Error is already handled in the hook, but we can add additional handling if needed
+			console.error('Create listing error:', err);
 		}
 	};
+
+	// Show success toast when transaction is submitted (hash available)
+	useEffect(() => {
+		if (hash && !isConfirming && !isConfirmed) {
+			toast.success("Your listing transaction has been submitted!", {
+				description: "Please wait for confirmation..."
+			});
+		}
+	}, [hash, isConfirming, isConfirmed]);
+
+	// Show error toast when there's a contract error
+	useEffect(() => {
+		if (contractError) {
+			toast.error("Failed to create listing", {
+				description: contractError
+			});
+		}
+	}, [contractError]);
 
 	// Reset form when transaction is confirmed
 	useEffect(() => {

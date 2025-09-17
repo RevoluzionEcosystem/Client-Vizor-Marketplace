@@ -159,8 +159,8 @@ export default function AdminDebugPage() {
             
             // Transaction patterns
             const lastActivity = Math.max(
-                ...userListings.map(l => l.createdAt || 0),
-                ...userPurchases.map(l => l.purchaseTimestamp || 0)
+                ...userListings.map(l => Number(l.createdAt || 0)),
+                ...userPurchases.map(l => Number(l.purchaseTimestamp || 0))
             );
 
             setUserAnalysis({
