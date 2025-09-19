@@ -64,41 +64,59 @@ export function useMarketplaceWrite() {
                 throw new Error('Price must be greater than 0');
             }
             
-            if (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000') {
-                throw new Error('Invalid token address');
+            if (!tokenAddress || tokenAddress.length !== 42 || !tokenAddress.startsWith('0x') || !/^0x[a-fA-F0-9]{40}$/.test(tokenAddress)) {
+                throw new Error(`Invalid token address: ${tokenAddress}. Must be a valid Ethereum address.`);
             }
             
-            if (!lpAddress || lpAddress === '0x0000000000000000000000000000000000000000') {
-                throw new Error('Invalid LP token address');
+            if (!lpAddress || lpAddress.length !== 42 || !lpAddress.startsWith('0x') || !/^0x[a-fA-F0-9]{40}$/.test(lpAddress)) {
+                throw new Error(`Invalid LP token address: ${lpAddress}. Must be a valid Ethereum address.`);
             }
             
-            if (!lockUrl || lockUrl.trim() === '') {
-                throw new Error('Lock URL cannot be empty');
+            // Validate URL format
+            try {
+                new URL(lockUrl);
+                if (!lockUrl.includes('.') || lockUrl.length < 8) {
+                    throw new Error('URL appears to be incomplete');
+                }
+            } catch {
+                throw new Error(`Invalid lock URL: ${lockUrl}. Must be a valid URL.`);
             }
             
-            if (!contactMethod || contactMethod.trim() === '') {
-                throw new Error('Contact method cannot be empty');
+            if (!contactMethod || contactMethod.trim().length < 5) {
+                throw new Error(`Contact method too short: ${contactMethod}. Must be at least 5 characters.`);
             }
             
             console.log('✅ All validations passed, submitting transaction...');
             
-            await writeContract({
+            console.log('🚀 Calling writeContract directly...');
+            
+            const result = await writeContract({
                 address: MARKETPLACE_CONTRACT_ADDRESS,
                 abi: marketplaceAbi,
                 functionName: 'createListing',
                 args: [
                     parseEther(price),
-                    [tokenAddress as `0x${string}`, lpAddress as `0x${string}`],
+                    [tokenAddress as `0x${string}`, lpAddress as `0x${string}`] as const,
                     lockUrl,
                     contactMethod
-                ],
+                ] as const,
                 value: listingFeeValue,
                 chain: bscTestnet,
                 account: address
             });
             
-            console.log('🚀 Transaction submitted successfully!');
+            console.log('📤 WriteContract result:', result);
+            console.log('🎉 Transaction submitted successfully!');
         } catch (err: any) {
+            console.error('❌ CreateListing failed:', err);
+            console.error('❌ Error details:', {
+                message: err.message,
+                code: err.code,
+                reason: err.reason,
+                data: err.data,
+                stack: err.stack
+            });
+            
             let errorMessage = 'Failed to create listing';
             
             if (err.message?.includes('User rejected')) {
@@ -109,12 +127,20 @@ export function useMarketplaceWrite() {
                 errorMessage = 'Network error - please check your connection';
             } else if (err.message?.includes('gas')) {
                 errorMessage = 'Transaction failed due to gas issues';
+            } else if (err.message?.includes('Incorrect listing fee')) {
+                errorMessage = 'Incorrect listing fee amount';
+            } else if (err.message?.includes('Invalid address')) {
+                errorMessage = 'One or more addresses are invalid';
+            } else if (err.message?.includes('Price must be greater than 0')) {
+                errorMessage = 'Price must be greater than 0';
+            } else if (err.message?.includes('String cannot be empty')) {
+                errorMessage = 'All fields must be filled';
             } else if (err.message) {
                 errorMessage = err.message;
             }
             
             setError(errorMessage);
-            console.error('Error creating listing:', err);
+            console.error('❌ Final error message:', errorMessage);
         } finally {
             setIsLoading(false);
         }
@@ -272,6 +298,7 @@ export function useMarketplaceWrite() {
         isConfirmed,
         error,
         hash,
+        isPending, // Add isPending for debugging
         
         // Functions
         createListing,

@@ -19,6 +19,7 @@ export function CreateListingForm() {
         isConfirmed, 
         error: contractError,
         hash,
+        isPending,
         clearError
     } = useMarketplaceWrite();
     
@@ -328,6 +329,7 @@ export function CreateListingForm() {
                         Button disabled: {(!isConnected || isLoading || isConfirming).toString()} | 
                         Connected: {isConnected.toString()} | 
                         Loading: {isLoading.toString()} | 
+                        Pending: {isPending.toString()} | 
                         Confirming: {isConfirming.toString()}
                     </div>
 
@@ -339,7 +341,7 @@ export function CreateListingForm() {
                             console.log('  Form Data:', formData);
                             console.log('  Connected:', isConnected);
                             console.log('  Address:', address);
-                            console.log('  Loading States:', { isLoading, isConfirming, isConfirmed });
+                            console.log('  Loading States:', { isLoading, isPending, isConfirming, isConfirmed });
                             console.log('  Contract Error:', contractError);
                             console.log('  Hash:', hash);
                             
@@ -356,6 +358,35 @@ export function CreateListingForm() {
                         className="w-full bg-purple-600 hover:bg-purple-700 text-white font-mono py-2 text-sm"
                     >
                         🔍 Debug Info
+                    </Button>
+
+                    {/* Test with Valid Data Button */}
+                    <Button
+                        type="button"
+                        onClick={async () => {
+                            if (!isConnected) {
+                                toast.error('Please connect your wallet first');
+                                return;
+                            }
+                            
+                            console.log('🧪 Testing with valid data...');
+                            try {
+                                await createListing(
+                                    '1.0', // Valid price
+                                    '0x55d398326f99059fF775485246999027B3197955', // USDT BSC address (valid)
+                                    '0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE', // Random valid LP address
+                                    'https://www.unicrypt.network/amm/pancake-v2/pair/0x123456789', // Valid URL
+                                    'Telegram: @testuser123' // Valid contact
+                                );
+                            } catch (err: any) {
+                                console.error('❌ Test failed:', err);
+                                toast.error(`Test failed: ${err.message}`);
+                            }
+                        }}
+                        disabled={!isConnected || isLoading || isConfirming}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white font-mono py-2 text-sm disabled:opacity-50"
+                    >
+                        🧪 Test with Valid Data
                     </Button>
                 </form>
 
